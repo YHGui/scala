@@ -11,6 +11,7 @@ object DateUtils {
 
   /**
     * SimpleDateFormat线程不安全，换成FastDateFormat即可
+    * 导致解析出错
     */
   //输入文件日期格式
   val YYYYMMDDHHMM_TIME_FORMAT = FastDateFormat.getInstance("dd/MMM/yyyy:HH:mm:ss Z", Locale.ENGLISH)
