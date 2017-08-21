@@ -16,34 +16,34 @@ object TopNStatJob {
     * @param accessDF
     * @return
     */
-  def videoAccessTopNStat(spark: SparkSession, accessDF: DataFrame) = {
+  def videoAccessTopNStat(spark: SparkSession, accessDF: DataFrame, day:String) = {
 
     /**
       * 使用dataframe方式统计
       */
-    //    import spark.implicits._
-//
-//    val videoAccessTopNDf = accessDF.filter($"day" === "20170511" && $"cmsType" === "video")
-//      .groupBy("day", "cmsId").agg(count("cmsId").as("times")).orderBy($"times".desc)
-//
-//    videoAccessTopNDf.show()
+        import spark.implicits._
+
+    val videoAccessTopNDf = accessDF.filter($"day" === day && $"cmsType" === "video")
+      .groupBy("day", "cmsId").agg(count("cmsId").as("times")).orderBy($"times".desc)
+
+    videoAccessTopNDf.show()
 
     /**
       * 使用sql方式进行统计
       */
-    accessDF.createOrReplaceTempView("access_logs")
-    val videoAccessTopNDf = spark.sql("select day,cmsId,count(1) as times from access_logs " +
-      "where day='20170511' and cmsType='video' " +
-      "group by day,cmsId order by times desc")
+//    accessDF.createOrReplaceTempView("access_logs")
+//    val videoAccessTopNDf = spark.sql("select day,cmsId,count(1) as times from access_logs " +
+//      "where day='20170511' and cmsType='video' " +
+//      "group by day,cmsId order by times desc")
 
-    val articleAccessTopNDf = spark.sql("select day,cmsId,count(1) as times from access_logs " +
-      "where day='20170511' and cmsType='article' " +
-      "group by day,cmsId order by times desc")
+//    val articleAccessTopNDf = spark.sql("select day,cmsId,count(1) as times from access_logs " +
+//      "where day='20170511' and cmsType='article' " +
+//      "group by day,cmsId order by times desc")
 
 
     videoAccessTopNDf.show(false)
 
-    articleAccessTopNDf.show(false)
+    //articleAccessTopNDf.show(false)
 
     //将统计结果写入到mysql中
     try {
@@ -67,14 +67,14 @@ object TopNStatJob {
   }
 
   //按照城市进行统计TopN课程
-  def cityAccessTopNStat(spark: SparkSession, accessDF: DataFrame) = {
+  def cityAccessTopNStat(spark: SparkSession, accessDF: DataFrame, day:String) = {
 
     /**
       * 使用dataframe方式统计
       */
     import spark.implicits._
 
-    val cityAccessTopNDf = accessDF.filter($"day" === "20170511" && $"cmsType" === "video")
+    val cityAccessTopNDf = accessDF.filter($"day" === day && $"cmsType" === "video")
       .groupBy("day", "city", "cmsId").agg(count("cmsId").as("times")).orderBy($"times".desc)
 
     //cityAccessTopNDf.show()
@@ -115,13 +115,13 @@ object TopNStatJob {
   }
 
   //按照流量进行统计
-  def videoTrafficsTopNStat(spark: SparkSession, accessDF: DataFrame) = {
+  def videoTrafficsTopNStat(spark: SparkSession, accessDF: DataFrame, day:String) = {
     /**
       * 使用dataframe方式统计
       */
     import spark.implicits._
 
-    val videoTrafficsTopNDf = accessDF.filter($"day" === "20170511" && $"cmsType" === "video")
+    val videoTrafficsTopNDf = accessDF.filter($"day" === day && $"cmsType" === "video")
       .groupBy("day", "cmsId").agg(sum("traffic").as("traffics")).orderBy($"traffics".desc)
 
 
@@ -150,23 +150,26 @@ object TopNStatJob {
 
   def main(args: Array[String]): Unit = {
     val path = args(0)
+    val day = "20170511"
 
     val spark = SparkSession.builder().appName("SparkStatCleanJob")
         .config("spark.sql.sources.partitionColumnTypeInference.enabled",false)
       .master("local[2]").getOrCreate()
 
     val accessDF = spark.read.format("parquet").load(path)
-    accessDF.printSchema()
-    accessDF.show(false)
+//    accessDF.printSchema()
+//    accessDF.show(false)
+
+    StatDAO.deleteData(day)
 
     //最受欢迎Top N课程
-    //videoAccessTopNStat(spark, accessDF)
+    videoAccessTopNStat(spark, accessDF, day)
 
     //按照城市进行统计TopN课程
-    //cityAccessTopNStat(spark, accessDF)
+    //cityAccessTopNStat(spark, accessDF, day)
 
     //按照流量进行统计
-    videoTrafficsTopNStat(spark, accessDF)
+    videoTrafficsTopNStat(spark, accessDF, day)
 
     spark.stop()
   }
