@@ -6,6 +6,8 @@ learn Scala by reading Twitter's Scala School project(https://twitter.github.io/
 - The architecture of offline data pipeline
 ![Alt text](https://github.com/YHGui/scala/blob/ae9b0c55cdb0b7bb3af5e56a70acb839a625b501/images/architecture.jpeg?raw=true)
 - The issues are: 
-  - Top N course and articles(visualization)
+  - Top N course and articles(Todo => visualization)
+    - analyze the log for the Top N courses and articles, load data into mysql database
+    - TODO: visualization
   - Top N course partioned by city with the help of IP
   - Top N couser according to traffic

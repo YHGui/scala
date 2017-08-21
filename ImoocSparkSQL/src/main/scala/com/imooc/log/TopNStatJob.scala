@@ -35,8 +35,16 @@ object TopNStatJob {
       "where day='20170511' and cmsType='video' " +
       "group by day,cmsId order by times desc")
 
+    val articleAccessTopNDf = spark.sql("select day,cmsId,count(1) as times from access_logs " +
+      "where day='20170511' and cmsType='article' " +
+      "group by day,cmsId order by times desc")
+
+
     videoAccessTopNDf.show(false)
 
+    articleAccessTopNDf.show(false)
+
+    //将统计结果写入到mysql中
     try {
       videoAccessTopNDf.foreachPartition(partitionOfRecords => {
         val list = new ListBuffer[DayVideoAccessStat]
