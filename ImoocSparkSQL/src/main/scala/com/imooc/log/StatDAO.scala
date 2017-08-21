@@ -54,6 +54,7 @@ object StatDAO {
     try {
       connection = MySQLUtils.getConnection()
 
+      //手动提交
       connection.setAutoCommit(false)
 
       val sql = "insert into day_video_city_access_topn_stat(day,cms_id,city,times,times_rank) values (?,?,?,?,?)"
@@ -67,10 +68,13 @@ object StatDAO {
         pstmt.setLong(4, ele.times)
         pstmt.setInt(5, ele.timesRank)
 
+        //将一组参数添加到prepareStatement对象内部
         pstmt.addBatch()
       }
 
+      //将一批参数提交给数据库来执行，如果全部命令执行成功，则返回更新计数组成的数组
       pstmt.executeBatch()
+      //手动提交
       connection.commit()
     } catch {
       case e: Exception => e.printStackTrace()

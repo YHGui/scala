@@ -88,6 +88,8 @@ object TopNStatJob {
     ).as("times_rank")
     ).filter("times_rank <= 3")//.show(false)
 
+    top3DF.show(false)
+
     //将统计结果写入到mysql中
     try {
       top3DF.foreachPartition(partitionOfRecords => {
