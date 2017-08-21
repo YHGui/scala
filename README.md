@@ -21,3 +21,4 @@ learn Scala by reading Twitter's Scala School project(https://twitter.github.io/
   ![Alt text](https://github.com/YHGui/scala/blob/927cafeb55662d0ba4df28aa6e8b7199764266bc/images/TopN-course-zeppelin.jpeg)
   - visualization with zeppelin in bar
   ![Alt text](https://github.com/YHGui/scala/blob/927cafeb55662d0ba4df28aa6e8b7199764266bc/images/TopN-course-zeppelin-bar.jpeg)
+  - other topic visualizations are similar to them, they are ommited because of my little knowledge about front end, I cannot put them away elegantly.
