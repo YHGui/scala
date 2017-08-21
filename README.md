@@ -16,4 +16,4 @@ learn Scala by reading Twitter's Scala School project(https://twitter.github.io/
   - Top N couser according to traffic
     - analyze the log for the Top N courses and articles with the information about traffics, load data into mysql database
   - visualization
-  
+  ![Alt text](https://github.com/YHGui/scala/blob/46a6823e2051afd64f97c51f1ee70dad03325007/images/TopN-course.jpeg)
