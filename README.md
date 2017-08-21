@@ -13,3 +13,5 @@ learn Scala by reading Twitter's Scala School project(https://twitter.github.io/
     - analyze the log for the Top N courses and articles with the information about city, load data into mysql database(deadlock in batching)
     - TODO: visualization
   - Top N couser according to traffic
+    - analyze the log for the Top N courses and articles with the information about traffics, load data into mysql database
+    - TODO: visualization

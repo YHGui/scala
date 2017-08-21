@@ -82,4 +82,38 @@ object StatDAO {
       MySQLUtils.release(connection, pstmt)
     }
   }
+
+  /**
+    * 批量保存DayVideoTrafficsStat数据到数据库
+    * @param list
+    */
+  def insertDayVideoTrafficsAccessTopN(list:ListBuffer[DayVideoTrafficsStat]):Unit = {
+
+    var connection: Connection = null
+    var pstmt: PreparedStatement = null
+    try {
+      connection = MySQLUtils.getConnection()
+
+      connection.setAutoCommit(false)
+
+      val sql = "insert into day_video_traffics_topn_stat(day,cms_id,traffics) values (?,?,?)"
+
+      pstmt = connection.prepareStatement(sql)
+
+      for (ele <- list) {
+        pstmt.setString(1, ele.day)
+        pstmt.setLong(2, ele.cmsId)
+        pstmt.setLong(3, ele.traffics)
+
+        pstmt.addBatch()
+      }
+
+      pstmt.executeBatch()
+      connection.commit()
+    } catch {
+      case e: Exception => e.printStackTrace()
+    } finally {
+      MySQLUtils.release(connection, pstmt)
+    }
+  }
 }

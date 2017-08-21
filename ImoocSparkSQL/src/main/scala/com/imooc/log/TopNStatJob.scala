@@ -66,6 +66,7 @@ object TopNStatJob {
 
   }
 
+  //按照城市进行统计TopN课程
   def cityAccessTopNStat(spark: SparkSession, accessDF: DataFrame) = {
 
     /**
@@ -113,6 +114,40 @@ object TopNStatJob {
 
   }
 
+  //按照流量进行统计
+  def videoTrafficsTopNStat(spark: SparkSession, accessDF: DataFrame) = {
+    /**
+      * 使用dataframe方式统计
+      */
+    import spark.implicits._
+
+    val videoTrafficsTopNDf = accessDF.filter($"day" === "20170511" && $"cmsType" === "video")
+      .groupBy("day", "cmsId").agg(sum("traffic").as("traffics")).orderBy($"traffics".desc)
+
+
+    videoTrafficsTopNDf.show(false)
+
+    //将统计结果写入到mysql中
+    try {
+      videoTrafficsTopNDf.foreachPartition(partitionOfRecords => {
+        val list = new ListBuffer[DayVideoTrafficsStat]
+
+        partitionOfRecords.foreach(info => {
+          val day = info.getAs[String]("day")
+          val cmsId = info.getAs[Long]("cmsId")
+          val traffics = info.getAs[Long]("traffics")
+
+          list.append(DayVideoTrafficsStat(day, cmsId, traffics))
+        })
+
+        StatDAO.insertDayVideoTrafficsAccessTopN(list)
+      })
+    } catch {
+      case e:Exception => e.printStackTrace()
+    }
+
+  }
+
   def main(args: Array[String]): Unit = {
     val path = args(0)
 
@@ -128,7 +163,10 @@ object TopNStatJob {
     //videoAccessTopNStat(spark, accessDF)
 
     //按照城市进行统计TopN课程
-    cityAccessTopNStat(spark, accessDF)
+    //cityAccessTopNStat(spark, accessDF)
+
+    //按照流量进行统计
+    videoTrafficsTopNStat(spark, accessDF)
 
     spark.stop()
   }
