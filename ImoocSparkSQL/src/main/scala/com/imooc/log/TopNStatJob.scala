@@ -1,5 +1,6 @@
 package com.imooc.log
 
+import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
@@ -65,6 +66,51 @@ object TopNStatJob {
 
   }
 
+  def cityAccessTopNStat(spark: SparkSession, accessDF: DataFrame) = {
+
+    /**
+      * 使用dataframe方式统计
+      */
+    import spark.implicits._
+
+    val cityAccessTopNDf = accessDF.filter($"day" === "20170511" && $"cmsType" === "video")
+      .groupBy("day", "city", "cmsId").agg(count("cmsId").as("times")).orderBy($"times".desc)
+
+    //cityAccessTopNDf.show()
+
+    //window函数在SparkSQL中的应用，分组后的排序
+    val top3DF = cityAccessTopNDf.select(cityAccessTopNDf("day"),
+      cityAccessTopNDf("city"),
+      cityAccessTopNDf("cmsId"),
+      cityAccessTopNDf("times"),
+      row_number().over(Window.partitionBy(cityAccessTopNDf("city"))
+        .orderBy(cityAccessTopNDf("times").desc)
+    ).as("times_rank")
+    ).filter("times_rank <= 3")//.show(false)
+
+    //将统计结果写入到mysql中
+    try {
+      top3DF.foreachPartition(partitionOfRecords => {
+        val list = new ListBuffer[DayCityVideoAccessStat]
+
+        partitionOfRecords.foreach(info => {
+          val day = info.getAs[String]("day")
+          val cmsId = info.getAs[Long]("cmsId")
+          val city = info.getAs[String]("city")
+          val times = info.getAs[Long]("times")
+          val timesRank = info.getAs[Int]("times_rank")
+
+          list.append(DayCityVideoAccessStat(day, cmsId, city, times, timesRank))
+        })
+
+        StatDAO.insertDayCityVideoAccessTopN(list)
+      })
+    } catch {
+      case e:Exception => e.printStackTrace()
+    }
+
+  }
+
   def main(args: Array[String]): Unit = {
     val path = args(0)
 
@@ -76,7 +122,11 @@ object TopNStatJob {
     accessDF.printSchema()
     accessDF.show(false)
 
-    videoAccessTopNStat(spark, accessDF)
+    //最受欢迎Top N课程
+    //videoAccessTopNStat(spark, accessDF)
+
+    //按照城市进行统计TopN课程
+    cityAccessTopNStat(spark, accessDF)
 
     spark.stop()
   }
