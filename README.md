@@ -11,10 +11,9 @@ learn Scala by reading Twitter's Scala School project(https://twitter.github.io/
 - The issues are: 
   - Top N course and articles(Todo => visualization)
     - analyze the log for the Top N courses and articles, load data into mysql database
-    - TODO: visualization
   - Top N course partioned by city with the help of IP
     - analyze the log for the Top N courses and articles with the information about city, load data into mysql database(deadlock in batching)
-    - TODO: visualization
   - Top N couser according to traffic
     - analyze the log for the Top N courses and articles with the information about traffics, load data into mysql database
-    - TODO: visualization
+  - visualization
+  
