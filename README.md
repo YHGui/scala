@@ -1,6 +1,17 @@
 # Scala & Spark
 ## Scala School of Twitter
 learn Scala by reading Twitter's Scala School project(https://twitter.github.io/scala_school/zh_cn/index.html)
+## develope & deploy env
+  - hadoop-2.6.0-cdh5.7.0
+  - scala-2.11.8
+  - spark-2.1.0-bin-2.6.0-cdh5.7.0(build source code)
+  - apache-maven-3.3.9
+  - mysql
+  - jquery-3.2.1
+  - Echarts 3
+  - zeppelin-0.7.1-bin-all
+  - IntelliJ IDEA
+  - Mac OS 10.12.6 & CentOS 6.4 on VMware Fusion
 ## Echarts Demo Project for Spark
 - Hello Echarts
 ![Alt text](https://github.com/YHGui/scala/blob/f826a3d7f528b3b4a70792af5dc339ae74afe1a2/SparkWeb/images/echarts-demo.jpeg)	
