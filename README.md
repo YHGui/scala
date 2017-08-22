@@ -16,7 +16,7 @@ learn Scala by reading Twitter's Scala School project(https://twitter.github.io/
   - Top N couser according to traffic
     - analyze the log for the Top N courses and articles with the information about traffics, load data into mysql database
   - data on MySQL:
- 
+
   ![Alt text](https://github.com/YHGui/scala/blob/master/images/data.png)
   - visualization with echarts
   ![Alt text](https://github.com/YHGui/scala/blob/46a6823e2051afd64f97c51f1ee70dad03325007/images/TopN-course.jpeg)
@@ -43,5 +43,18 @@ hdfs://hadoop001:8020/imooc/input/* hdfs://hadoop001:8020/imooc/clean
 --master yarn \
 --executor-memory 1G \
 --num-executors 1 \
+/home/hadoop/lib/sql-1.0-jar-with-dependencies.jar \
+hdfs://hadoop001:8020/imooc/clean 20170511 
+## optimization
+- reuse data
+- cache
+- shuffle partitions
+./bin/spark-submit \
+--class com.imooc.log.TopNStatJobYARN \
+--name TopNStatJobYARN \
+--master yarn \
+--executor-memory 1G \
+--num-executors 1 \
+--conf spark.sql.shuffle.partitions=100 \
 /home/hadoop/lib/sql-1.0-jar-with-dependencies.jar \
 hdfs://hadoop001:8020/imooc/clean 20170511 
