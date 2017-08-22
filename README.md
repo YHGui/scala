@@ -22,3 +22,23 @@ learn Scala by reading Twitter's Scala School project(https://twitter.github.io/
   - visualization with zeppelin in bar
   ![Alt text](https://github.com/YHGui/scala/blob/927cafeb55662d0ba4df28aa6e8b7199764266bc/images/TopN-course-zeppelin-bar.jpeg)
   - other topic visualizations are similar to them, they are ommited because of my little knowledge about front end, I cannot put them away elegantly.
+## Spark YARN 
+- deploy data clean project on YARN
+./bin/spark-submit \
+--class com.imooc.log.SparkStatCleanJobYARN \
+--name SparkStatCleanJobYARN \
+--master yarn \
+--executor-memory 1G \
+--num-executors 1 \
+--files /home/hadoop/lib/ipDatabase.csv,/home/hadoop/lib/ipRegion.xlsx \
+/home/hadoop/lib/sql-1.0-jar-with-dependencies.jar \
+hdfs://hadoop001:8020/imooc/input/* hdfs://hadoop001:8020/imooc/clean
+- deploy statistics project on YARN
+./bin/spark-submit \
+--class com.imooc.log.TopNStatJobYARN \
+--name TopNStatJobYARN \
+--master yarn \
+--executor-memory 1G \
+--num-executors 1 \
+/home/hadoop/lib/sql-1.0-jar-with-dependencies.jar \
+hdfs://hadoop001:8020/imooc/clean 20170511 
