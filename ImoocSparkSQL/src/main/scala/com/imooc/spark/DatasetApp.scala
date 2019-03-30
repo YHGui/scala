@@ -2,9 +2,7 @@ package com.imooc.spark
 
 import org.apache.spark.sql.SparkSession
 
-/**
-  * Created by guiyonghui on 2017/8/20.
-  */
+
 object DatasetApp {
 
   def main(args: Array[String]): Unit = {

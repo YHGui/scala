@@ -55,5 +55,6 @@ object DataFrameRDDApp {
     spark.sql("select * from infos where age > 30").show()
   }
 
+  //java bean
   case class Info(id:Int, name: String, age:Int)
 }
